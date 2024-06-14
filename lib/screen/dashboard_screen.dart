@@ -3,41 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:app/screen/profilscreen.dart';
 import 'package:app/screen/beranda_elektronik.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class DashboardScreen extends StatefulWidget {
-
- @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
-}
-
-class _DashboardScreenState extends State<DashboardScreen> {
-
-  late String token;
-  late String name;
-  late String dept;
-  late String imgUrl;
-
-  Future<void> getUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('jwt')?? "";
-    String? name = prefs.getString('name')?? "";
-    String? dept = prefs.getString('dept')?? "";
-    String? imgUrl = prefs.getString('imgProfil')?? "not found";
-
-    setState(() {
-      this.token = token;
-      this.name = name;
-      this.dept = dept;
-      this.imgUrl = imgUrl;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getUserData();
-  }
+class DashboardScreen extends StatelessWidget {
 
 
   @override

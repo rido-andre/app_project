@@ -2,97 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:app/screen/dashboard_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginScreen extends StatefulWidget{
+class LoginScreen extends StatelessWidget{
   const LoginScreen({super.key});
-
- @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
-}
-
-class _DashboardScreenState extends State<DashboardScreen> {
-    final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false;
-
-  Future<void> _login() async {
-    final username = _usernameController.text;
-    final password = _passwordController.text;
-
-    if (username.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter your username and password')),
-      );
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    const url =
-        'https://presensi.spilme.id/login'; // Replace with your server address
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'username': username,
-        'password': password,
-      }),
-    );
-    if (response.statusCode == 200) {
-      final responseBody = jsonDecode(response.body);
-      final token = responseBody['token'];
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('jwt', token);
-
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => DashboardScreen()),
-        (route) => false,
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Invalid username or password')),
-      );
-    }
-
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
-  late String token;
-  late String name;
-  late String dept;
-  late String imgUrl;
-
-  Future<void> getUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('jwt')?? "";
-    String? name = prefs.getString('name')?? "";
-    String? dept = prefs.getString('dept')?? "";
-    String? imgUrl = prefs.getString('imgProfil')?? "not found";
-
-    setState(() {
-      this.token = token;
-      this.name = name;
-      this.dept = dept;
-      this.imgUrl = imgUrl;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getUserData();
-  }
 
   @override
   Widget build(BuildContext context){
