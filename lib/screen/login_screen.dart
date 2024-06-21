@@ -48,12 +48,21 @@ class _LoginScreen extends State<LoginScreen> {
         'password': password,
       }),
     );
+     if (kDebugMode) {
+      print(response.statusCode);
+    }
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
       final token = responseBody['token'];
+      final name = responseBody['nama'];
+      final dept = responseBody['departemen'];
+      final imgUrl = responseBody['imgUrl'];
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('jwt', token);
+      await prefs.setString('name', name);
+      await prefs.setString('dept', dept);
+      await prefs.setString('imgProfil', imgUrl);
 
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => DashboardScreen()),
@@ -109,11 +118,13 @@ class _LoginScreen extends State<LoginScreen> {
                         color: const Color(0xFFACAFB5),
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const TextField(
-                      decoration: InputDecoration(
+                    const SizedBox(height: 20,),
+                  //  const TextField(
+                  //    decoration: InputDecoration(
+                    TextField(
+                      controller: _usernameController,
+                      decoration: const InputDecoration(
+                    
                         labelText: 'Username',
                         filled: true,
                         fillColor: Color.fromARGB(255, 255, 255, 255),
@@ -125,14 +136,14 @@ class _LoginScreen extends State<LoginScreen> {
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(color: Color(0xFF12A3DA)),
                         ),
+                    ),
                       ),
                       //        keyboardType: TextInputType.emailAddress,
-                    ),
                           const SizedBox(height: 24),// Password TextField
                     //      const TextField(
                     //        decoration: InputDecoration(
                     TextField(
-                      controller: _usernameController,
+                      controller: _passwordController,
                       decoration: const InputDecoration(
                         labelText: 'Password',
                         filled: true,

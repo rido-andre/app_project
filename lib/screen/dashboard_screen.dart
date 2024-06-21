@@ -3,13 +3,46 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:app/screen/profilscreen.dart';
 import 'package:app/screen/beranda_elektronik.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  late String token;
+  late String name;
+  late String dept;
+  late String imgUrl;
+
+  Future<void> getUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt') ?? "";
+    String? name = prefs.getString('name') ?? "";
+    String? dept = prefs.getString('dept') ?? "";
+    String? imgUrl = prefs.getString('imgProfil') ?? "not found";
+
+    setState(() {
+      this.token = token;
+      this.name = name;
+      this.dept = dept;
+      this.imgUrl = imgUrl;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: Color(0xffABC7C9),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(
@@ -28,12 +61,12 @@ class DashboardScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       side: const BorderSide(
                           color: Color.fromARGB(255, 199, 197, 197)),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     color: Colors.white,
                     child: Padding(
                       padding:
-                          const EdgeInsets.all(16), //ruang di setiap sisi card
+                          const EdgeInsets.all(15), //ruang di setiap sisi card
                       child: Column(
                         // mainAxisAlignment: MainAxisAlignment.center,
                         // crossAxisAlignment: CrossAxisAlignment.center,
@@ -82,23 +115,21 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                      //mengatur item yang menumpuk
-                      top: -75, //posisi item
-                      // left: 20,
-                      child: Container(
-                          //pembungkus gmbar
-                          width: 125,
-                          height: 125, //besarnya gambar
-                          decoration: BoxDecoration(
-                            boxShadow: [],
-                            image: DecorationImage(
-                                image: AssetImage('assets/images/user.png'),
-                                fit: BoxFit.fitWidth),
-                            borderRadius:
-                                BorderRadius.all(Radius.elliptical(125, 125)),
-                          ))),
+                    top: -35,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image.network(
+                        imgUrl,
+                        height: 100,
+                        width:
+                            100, // Ensure width and height are the same for a circular effect
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
                 ],
               ),
+              const SizedBox(width: 10),
               // item stack di atas
               // item lain di bawah
               SizedBox(
@@ -244,7 +275,7 @@ class DashboardScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
+      ),
+    );
+  }
 }
